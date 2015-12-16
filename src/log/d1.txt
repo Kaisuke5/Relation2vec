@@ -1,0 +1,58 @@
+begin pmi
+size:6804 1180
+----d=10-----
+PMI Matrix
+attack
+fire
+hit
+strike
+capture
+shoot
+seize
+release
+
+----d=50-----
+PMI Matrix
+attack
+hit
+strike
+fire
+bomb
+carry
+shoot
+step
+
+----d=100-----
+PMI Matrix
+attack
+strike
+hit
+bomb
+carry
+destroy
+target
+shoot
+
+----d=300-----
+PMI Matrix
+attack
+raid
+bomb
+strike
+pound
+seal
+destroy
+wound
+
+----d=500-----
+PMI Matrix
+attack
+bomb
+strike
+raid
+pound
+destroy
+carry
+seal
+
+-----bow-----

@@ -1,0 +1,68 @@
+begin pmi
+size:6804 1180
+----d=10-----
+PMI Matrix
+help
+stand
+deliver
+play
+promise
+head
+congratulate
+assure
+
+----d=50-----
+PMI Matrix
+help
+train
+stand
+deliver
+promise
+assure
+play
+find
+
+----d=100-----
+PMI Matrix
+help
+train
+draw
+find
+supplier
+supply
+admit
+sell
+
+----d=300-----
+PMI Matrix
+help
+implicate
+province
+mass
+crash
+seal
+admit
+pound
+
+----d=500-----
+PMI Matrix
+help
+implicate
+mass
+train
+seal
+pound
+province
+admit
+
+-----bow-----
+PMI Matrix
+help
+implicate
+train
+mass
+seal
+province
+admit
+pound
+

@@ -149,7 +149,7 @@ class Corpus:
 	def c_similar(self,verb,bow=False,non_factorize=False,N=10):
 		id=self.verb[verb]
 		v=self.c[id]
-
+		ans=[]
 
 		#vc/(|v|*|c|)
 		cos_vec=np.sum(self.c*v,axis=1)/(np.linalg.norm(self.c,axis=1)*np.linalg.norm(v))
@@ -157,14 +157,17 @@ class Corpus:
 		l=l[::-1]
 		vl=self.verb.items()
 		print "PMI Matrix"
+
+		lst=[]
 		for i in l[0:N]:
 			obj=filter(lambda x:x[1]==i,vl)[0][0]
 			print obj#,np.sum(self.c[i]*v)/(np.linalg.norm(self.c[i])*np.linalg.norm(v))
-
-
+			lst.append(obj)
+		ans.append(lst)
 
 
 		if bow:
+			lst=[]
 			v=self.bow_matrix.T[id]
 			print "\noption bow rank\n"
 			#cos_vec= np.sum(self.c2*v,axis=1)/(np.linalg.norm(self.c2,axis=1)*np.linalg.norm(v))
@@ -172,24 +175,34 @@ class Corpus:
 
 			l=np.argsort(cos_vec)
 			l=l[::-1]
+
 			for i in l[0:N]:
+
 				obj=filter(lambda x:x[1]==i,vl)[0][0]
 				print obj#,np.sum(self.c2[i]*v)/(np.linalg.norm(self.c2[i])*np.linalg.norm(v))
+				lst.append(obj)
 
+			ans.append(lst)
+			print
 
 		if non_factorize:
+			lst=[]
 			v=self.pmi_matrix.T[id]
 			print "\nnon_factorize_pmi rank\n"
 			cos_vec= np.sum(self.pmi_matrix.T*v,axis=1)/(np.linalg.norm(self.pmi_matrix.T,axis=1)*np.linalg.norm(v))
 
 			l=np.argsort(cos_vec)
 			l=l[::-1]
+
 			for i in l[0:N]:
+
 				obj=filter(lambda x:x[1]==i,vl)[0][0]
 				print obj#,np.sum(self.c2[i]*v)/(np.linalg.norm(self.c2[i])*np.linalg.norm(v))
+				lst.append(obj)
 
+			ans.append(lst)
 
-
+		return ans
 
 
 	def w_similar(self,tuple,option=0,N=10):
@@ -252,6 +265,7 @@ class Corpus:
 			obj = filter(lambda x:x[1]==i,vl)[0][0]
 			print obj
 
+		print
 		ans=self.w[id_tp]-self.w[id_tn]+(self.c[id_v])
 		cos_vec=np.sum(self.c*ans,axis=1)/(np.linalg.norm(self.c,axis=1)*np.linalg.norm(ans))
 		l=np.argsort(cos_vec)[::-1]
@@ -272,8 +286,8 @@ if __name__=="__main__":
 	c=Corpus()
 	c.all_load_corpus()
 
-	for key,value in sorted(c.verb.items(),key=lambda x:x[1],reverse=True):
-		print key,value
+	# for key,value in sorted(c.verb.items(),key=lambda x:x[1],reverse=True):
+	# 	print key,value
 
 
 
