@@ -1,0 +1,9 @@
+,100,1000,300,500,bow
+0,say,say,say,say,say
+1,kill,call,call,call,kill
+2,call,warn,warn,warn,shoot
+3,warn,urge,urge,urge,arrest
+4,urge,kill,kill,kill,call
+5,tell,tell,tell,tell,launch
+6,launch,hold,hold,hold,urge
+7,hold,accuse,accuse,accuse,confirm

@@ -1,6 +1,9 @@
 #a=() b=verb
 import numpy as np
 import math
+import function as F
+
+
 class Corpus:
 
 	def __init__(self):
@@ -11,7 +14,7 @@ class Corpus:
 		self.count_verb=[]
 		self.t_v_dic={}
 
-		self.stopword="be with ready hopeful take make begin set bring have rap down pad challenge buy work produce turn join end start not home different direct subject remind bone grateful market".split()
+		self.stopword="disappear revert customer destination chairman shower shun envision Poland guarantor sensitive blocklist be with ready hopeful take make begin set bring have rap down pad challenge work produce end start not home different direct subject bone grateful market".split()
 
 
 
@@ -86,6 +89,31 @@ class Corpus:
 
 		print "size:%d %d" % (len(self.pmi_matrix),len(self.pmi_matrix[0]))
 
+	def load_line2(self,line,ignore_contry=[]):
+		t,verb=F.make_tuple_from_line(line)
+
+		t_v=t+"="+verb
+
+		if t in self.tuple:
+			id=self.tuple[t]
+			self.count_tuple[id]+=1
+
+		else:
+			id=len(self.tuple)
+			self.tuple[t]=id
+			self.count_tuple.append(1)
+
+		if verb in self.verb:
+			id=self.verb[verb]
+			self.count_verb[id]+=1
+
+		else:
+			id=len(self.verb)
+			self.verb[verb]=id
+			self.count_verb.append(1)
+
+		if t_v in self.t_v_dic: self.t_v_dic[t_v]+=1
+		else: self.t_v_dic[t_v]=1
 
 
 
@@ -108,12 +136,11 @@ class Corpus:
 		self.PMI()
 
 	def all_load_corpus(self):
+		CORPUS_FILE="Corpus_fixed.txt"
 
-		#c="USA IRQ AFG ISR PSE IRN SYR".split()
 		count=0
-		for line in open("corpus.txt","r"):
-			#if count==10: break
-			data=line.split()
+		#for line in open("corpus.txt","r"):
+		for line in open(CORPUS_FILE,"r"):
 
 			#if len(data[3])>2 and (data[1] in c or data[2] in c):
 			self.load_line(line)
@@ -131,6 +158,8 @@ class Corpus:
 		U,s,V=np.linalg.svd(self.pmi_matrix,full_matrices=False)
 		#s=s[::-1]
 		s=np.diag(s[:d])
+		#self.w=np.dot(U[:,0:d],np.sqrt(s))
+		# self.c=np.dot(V.T[:,0:d],np.sqrt(s))
 		self.w=np.dot(U[:,0:d],s)
 		self.c=np.dot(V.T[:,0:d],s)
 
@@ -245,37 +274,43 @@ class Corpus:
 
 
 
-	def similar(self,tp,verb,tn,N=10):
 
-		id_tp=self.tuple[tp]
-		id_v=self.verb[verb]
-		id_tn=self.tuple[tn]
+	def similar(self,t1,v2,t2,N=10):
+		id_t1=self.tuple[t1]
+		id_t2=self.tuple[t2]
+		v2=self.verb[v2]
 
-
-
-		p=self.c<0
-		squared_c=np.sqrt(np.fabs(self.c))
-		squared_c[p]=squared_c[p]*-1
-		ans=self.w[id_tp]-self.w[id_tn]+squared_c[id_v]
-		cos_vec=np.sum(self.c*ans,axis=1)/(np.linalg.norm(self.c,axis=1)*np.linalg.norm(ans))
-		l=np.argsort(cos_vec)[::-1]
-
+		v=self.c[v2]+1.2*(self.w[id_t1]-self.w[id_t2])
+		cos_vec=np.sum(self.c*v,axis=1)/(np.linalg.norm(self.c,axis=1)*np.linalg.norm(v))
+		l=np.argsort(cos_vec)
+		l=l[::-1]
 		vl=self.verb.items()
+		print "PMI Matrix"
+
+		lst=[]
 		for i in l[0:N]:
-			obj = filter(lambda x:x[1]==i,vl)[0][0]
+			obj=filter(lambda x:x[1]==i,vl)[0][0]
+			print obj#,np.sum(self.c[i]*v)/(np.linalg.norm(self.c[i])*np.linalg.norm(v))
+			lst.append(obj)
+
+
+
+
+	def freq_verb(self,t,N=10):
+		id=self.tuple[t]
+		vec=self.pmi_matrix[id]
+		l=np.argsort(vec)
+
+		l=l[::-1]
+		vl=self.verb.items()
+		print "PMI Matrix"
+
+		lst=[]
+		for i in l[0:N]:
+			obj=filter(lambda x:x[1]==i,vl)[0][0]
 			print obj
 
-		print
-		ans=self.w[id_tp]-self.w[id_tn]+(self.c[id_v])
-		cos_vec=np.sum(self.c*ans,axis=1)/(np.linalg.norm(self.c,axis=1)*np.linalg.norm(ans))
-		l=np.argsort(cos_vec)[::-1]
 
-		print "----------------"
-
-		vl=self.verb.items()
-		for i in l[0:N]:
-			obj = filter(lambda x:x[1]==i,vl)[0][0]
-			print obj
 
 
 

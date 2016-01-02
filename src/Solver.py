@@ -67,19 +67,20 @@ if __name__ == "__main__":
 	train_y=[]
 
 	danger_set=filter(lambda x:x[0] in pmi.tuple,md.dataset)
+	print len(danger_set)
 	danger_id=map(lambda x:pmi.tuple[x[0]],danger_set)
 	danger_id.sort()
 
-	pmi.factorize(d=500)
+	pmi.factorize(d=300)
 	m=np.dot(pmi.w,pmi.c.T)
 
 
-
-
-
+	a1=0
+	a2=0
+	#for i in range(5):
 	data1=extract_dataset(pmi.bow_matrix,danger_id,train_rate=0.5,train_safe=3)
 	data2=extract_dataset(m,danger_id,train_rate=0.5,train_safe=3)
-	print len(danger_id)*0.3,len(danger_id)-len(danger_id)*0.3
+
 
 
 
@@ -92,19 +93,41 @@ if __name__ == "__main__":
 	lr1.fit(data1[0],data1[1])
 	lr2.fit(data2[0],data2[1])
 
-
-	print "1:",len(filter(lambda x:x==1,data1[3])),"0:",len(filter(lambda x:x==0,data1[3]))
+	T=len(filter(lambda x:x==1,data1[3]))
+	F=len(filter(lambda x:x==0,data1[3]))
+	print "1:",T,"0:",F
 
 	lrout1=lr1.predict(data1[2])
 	lrout2=lr2.predict(data2[2])
 	l=len(filter(lambda x:x==1,data1[3]))
-	print len(filter(lambda x:x==0,lrout1[:l])),len(filter(lambda x:x>0,lrout1[:l]))
-	print len(filter(lambda x:x==0,lrout2[:l])),len(filter(lambda x:x>0,lrout2[:l]))
 
 
+	FP1=len(filter(lambda x:x==0,lrout1[:l]))
+	TP1=len(filter(lambda x:x==1,lrout1[:l]))
+	TN1=len(filter(lambda x:x>0,lrout1[l:]))
+	FN1=len(filter(lambda x:x==0,lrout1[l:]))
+
+	FP2=len(filter(lambda x:x==0,lrout2[:l]))
+	TP2=len(filter(lambda x:x==1,lrout2[:l]))
+	TN2=len(filter(lambda x:x>0,lrout2[l:]))
+	FN2=len(filter(lambda x:x==0,lrout2[l:]))
+
+
+	print "-----bow------"
+	print "TP",TP1
+	print "FN",FN1
+	print "accuracy",float(TP1+FN1)/(T+F)
+
+	print "-----our method----"
+	print "TP",TP2
+	print "FN",FN2
+	print "accuracy",float(TP2+FN2)/(T+F)
 
 
 	fpr1, tpr1, thresholds1 = metrics.roc_curve(data1[3], lrout1, pos_label=1)
 	fpr2, tpr2, thresholds2 = metrics.roc_curve(data2[3], lrout2, pos_label=1)
 	print "auc1:",metrics.auc(fpr1,tpr1)
 	print "auc2:",metrics.auc(fpr2,tpr2)
+
+	a1+=metrics.auc(fpr1,tpr1)
+	a2+=metrics.auc(fpr2,tpr2)

@@ -58,4 +58,6 @@ class mid_data:
 
 
 if __name__=="__main__":
-	print "kai"
+	mid=mid_data()
+	mid_data.dump()
+	print mid.serach(hostlev=3)
